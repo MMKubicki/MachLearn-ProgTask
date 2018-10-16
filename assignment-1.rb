@@ -49,19 +49,20 @@ end
 # preparing output file
 options[:output_path] = File.basename(options[:data_path], '.*') << '_output.csv' if options[:output_path].nil?
 
-# File.delete(options[:output_path]) if File.exist? options[:output_path]
-
 # loading
 puts 'Loading training data'
-training_data = CSV.read(options[:data_path])
+
+training_data = []
+CSV.read(options[:data_path]).each do |row|
+  training_data.append [row[0..-2], row.last]
+end
 
 # begin-message
 puts "Start training with η=#{options[:learning_rate]} and threshold=#{options[:threshold]}"
 puts "Output will be saved in #{options[:output_path]}"
 
-#outputfile
 output_file = CSV.open(options[:output_path], 'w+')
 
-output_file << %w[Test this shit!]
+
 
 output_file.close
