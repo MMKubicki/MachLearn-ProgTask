@@ -9,7 +9,7 @@ require 'optparse'
 require 'csv'
 
 # custom methods and structures defined in core_ext.rb
-require_relative 'new_in'
+require_relative 'functions'
 
 # commandline parsing
 options = {}
@@ -47,13 +47,11 @@ unless File.file? options[:data_path]
   puts "#{options[:data_path]} doesn't exist!"
 end
 
-## Check given output (correct: extension and not given at all)
-if options[:output_path].nil?
+## Check given output (correct: not given at all)
+if options[:output_path].nil? ||
   options[:output_path] = File.basename(options[:data_path], '.*') << '_output.xml'
   puts "No output specified. Writing to #{options[:output_path]}"
 end
-
-options[:output_path] << '.xml' if File.extname(options[:output_path]).nil?
 
 # loading Data
 puts '=== Loading Data'
