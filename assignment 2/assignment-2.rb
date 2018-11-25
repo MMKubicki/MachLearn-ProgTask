@@ -36,7 +36,6 @@ end
 
 option_parser.parse!
 
-
 # Check input
 if options[:data_path].nil?
   puts "Missing Arguments. See #{script} -h"
@@ -56,12 +55,11 @@ end
 
 options[:output_path] << '.xml' if File.extname(options[:output_path]).nil?
 
-
 # loading Data
 puts '=== Loading Data'
 data = []
 CSV.read(options[:data_path]).each do |row|
-  #Format:
+  # Format:
   # [
   #   [[att0, att1, ...],class]
   #   .
