@@ -24,7 +24,7 @@ option_parser = OptionParser.new do |opt|
   opt.on('-d', '--data [FILE]', 'Path to data .csv') do |path|
     options[:data_path] = path
   end
-  opt.on('-o', '--output [FILE]', 'Path to output .xml') do |path|
+  opt.on('-o', '--output [FILE]', 'Path to output .xml. Will be overwritten') do |path|
     options[:output_path] = path
   end
   opt.separator ''
