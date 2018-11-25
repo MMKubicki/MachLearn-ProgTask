@@ -1,0 +1,13 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    builder (3.2.3)
+
+PLATFORMS
+  x64-mingw32
+
+DEPENDENCIES
+  builder (= 3.2.3)
+
+BUNDLED WITH
+   1.16.5
