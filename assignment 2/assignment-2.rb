@@ -7,7 +7,6 @@ end
 
 require 'optparse'
 require 'csv'
-require 'builder/xmlmarkup'
 
 # custom methods and structures defined in core_ext.rb
 require_relative 'new_in'
@@ -28,6 +27,11 @@ option_parser = OptionParser.new do |opt|
   opt.on('-o', '--output [FILE]', 'Path to output .xml') do |path|
     options[:output_path] = path
   end
+  opt.separator ''
+  opt.separator 'optional Arguments:'
+  opt.on('-v', '--verbose', 'Write a lot of information') do
+    $VERBOSE = true
+  end
 end
 
 option_parser.parse!
@@ -44,7 +48,7 @@ unless File.file? options[:data_path]
   puts "#{options[:data_path]} doesn't exist!"
 end
 
-## Check given output (correct extension and not given at all)
+## Check given output (correct: extension and not given at all)
 if options[:output_path].nil?
   options[:output_path] = File.basename(options[:data_path], '.*') << '_output.xml'
   puts "No output specified. Writing to #{options[:output_path]}"
@@ -54,37 +58,30 @@ options[:output_path] << '.xml' if File.extname(options[:output_path]).nil?
 
 
 # loading Data
-puts '== Loading Data'
+puts '=== Loading Data'
 data = []
 CSV.read(options[:data_path]).each do |row|
+  #Format:
+  # [
+  #   [[att0, att1, ...],class]
+  #   .
+  #   .
+  #   .
+  # ]
   data.append [row[0..-2], row.last]
 end
+puts '=== Done: Loading Data'
 
-#training
-puts '== Training'
+puts '=== ID3'
 
 tree = get_tree(data)
 
-def write_tree(file, tree)
-  builder = Builder::XmlMarkup.new(target: file, indent: 2)
-  builder.tree(entropy: tree.entropy) do |b|
-    tree.child_nodes.each do |node|
-      write_node(b, node)
-    end
-  end
-end
+puts '=== DONE: ID3'
 
-def write_node(builder, node)
-  if node.child_nodes.count.zero?
-    builder.node(node.result, entropy: node.entropy, feature: node.feature, value: node.value)
-  else
-    builder.node(entropy: node.entropy, feature: node.feature, value: node.value) { |b| node.child_nodes.each { |cn| write_node(b, cn) } }
-  end
-end
-
-
+puts '=== Creating XML'
+puts "Writing to: #{options[:output_path]}"
 File.open(options[:output_path], 'w+') do |f|
   write_tree(f, tree)
 end
 
-puts '=== DONE'
+puts '=== DONE: Creating XML'

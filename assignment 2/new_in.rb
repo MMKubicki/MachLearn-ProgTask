@@ -1,3 +1,7 @@
+require 'builder/xmlmarkup'
+
+$VERBOSE = false
+
 class Node
   attr_accessor :type, :entropy, :feature, :value, :child_nodes, :result
 
@@ -34,22 +38,22 @@ end
 def get_node(basic_info, data, checked)
   node = Node.new('node')
   node.entropy = get_entropy(basic_info, data)
-  puts "Entropy current node: #{node.entropy}"
+  puts "Entropy current node: #{node.entropy}" if $VERBOSE
 
   if node.entropy == 0.0
-    puts "Branche done: #{data.first.last}"
+    puts "Branche done: #{data.first.last}" if $VERBOSE
     node.result = data.first.last
     return node
   end
 
-  puts "Checked att: #{checked.sort_by { |v| v}.inspect}"
+  puts "Checked att: #{checked.sort_by { |v| v}.inspect}" if $VERBOSE
 
   gains = get_gains(basic_info, data, node.entropy, checked)
-  puts "Gains: #{gains.inspect}"
+  puts "Gains: #{gains.inspect}" if $VERBOSE
 
   target = gains.max_by { |_, v| v }.first
 
-  puts "Largest Gain: att#{target}"
+  puts "Largest Gain: att#{target}" if $VERBOSE
   checked_next = checked.dup.append(target)
 
 
@@ -106,4 +110,21 @@ def get_gain_attr(basic_info, data, entropy, attr_nr)
   end
 
   result
+end
+
+def write_tree(file, tree)
+  builder = Builder::XmlMarkup.new(target: file, indent: 2)
+  builder.tree(entropy: tree.entropy) do |b|
+    tree.child_nodes.each do |node|
+      write_node(b, node)
+    end
+  end
+end
+
+def write_node(builder, node)
+  if node.child_nodes.count.zero?
+    builder.node(node.result, entropy: node.entropy, feature: node.feature, value: node.value)
+  else
+    builder.node(entropy: node.entropy, feature: node.feature, value: node.value) { |b| node.child_nodes.each { |cn| write_node(b, cn) } }
+  end
 end
