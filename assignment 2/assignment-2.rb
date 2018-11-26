@@ -48,7 +48,7 @@ unless File.file? options[:data_path]
 end
 
 ## Check given output (correct: not given at all)
-if options[:output_path].nil? ||
+if options[:output_path].nil?
   options[:output_path] = File.basename(options[:data_path], '.*') << '_output.xml'
   puts "No output specified. Writing to #{options[:output_path]}"
 end
