@@ -8,7 +8,7 @@ end
 require 'optparse'
 require 'csv'
 
-# custom methods and structures defined in core_ext.rb
+# custom methods and structures defined in functions
 require_relative 'functions'
 
 # commandline parsing
